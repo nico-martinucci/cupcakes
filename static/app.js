@@ -1,16 +1,17 @@
 "use strict"
 
-const HOSTNAME = "http://localhost:5001/api";
+const HOSTNAME = "http://localhost:5001/api"; // URL! or "API BASE URL" or something more descriptive
 const $cupcakesList = $("#cupcakes-list");
 
 /**
  * Sends GET request to /cupcakes end point, and populates DOM element
  * with list of returned cupcakes.
  */
+// make into two functions
 async function populateCupcakeList() {
     const response = await axios({
         url: `${HOSTNAME}/cupcakes`,
-        method: "GET"
+        method: "GET" // default is "GET", no need for it; could use axios.get instead
     })
     const cupcakes = response.data.cupcakes // array of cupcakes
     console.log("cupcakes: ", cupcakes);
@@ -38,7 +39,7 @@ async function addNewCupcakeAndUpdateDOM(event) {
         url: `${HOSTNAME}/cupcakes`,
         method: "POST",
         data: {
-            flavor: $("input[name='flavor']").val(),
+            flavor: $("input[name='flavor']").val(), // use "id" - there's a way to do it in WTForms
             size: $("select[name='size']").val(),
             rating: $("select[name='rating']").val(),
             image: $("input[name='image']").val(),
