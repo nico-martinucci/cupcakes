@@ -29,7 +29,6 @@ CUPCAKE_DATA_2 = {
     "image": "http://test.com/cupcake2.jpg"
 }
 
-
 class CupcakeViewsTestCase(TestCase):
     """Tests for views of API."""
 
@@ -110,3 +109,50 @@ class CupcakeViewsTestCase(TestCase):
             })
 
             self.assertEqual(Cupcake.query.count(), 2)
+
+    def test_update_cupcake(self):
+        with app.test_client() as client:
+            url = f"/api/cupcakes/{self.cupcake.id}"
+            resp = client.patch(url, json={
+                "flavor": "mango",
+                "rating": 10,
+                "size": "large",
+                "image": "https://thescranline.com/wp-content/uploads/2021/03/Mango-Meringue-Cupcakes.jpg"
+            })
+
+            self.assertEqual(resp.status_code, 200)
+
+            data = resp.json.copy()
+
+            self.assertEqual(data, {
+                "cupcake": {
+                    "flavor": "mango",
+                    "id": self.cupcake.id,
+                    "rating": 10,
+                    "size": "large",
+                    "image": "https://thescranline.com/wp-content/uploads/2021/03/Mango-Meringue-Cupcakes.jpg"
+                }
+            })
+
+            # fix this
+            self.assertEqual(Cupcake.query.count(), 1)
+
+    def test_delete_cupcake(self):
+        with app.test_client() as client:
+            url = f"/api/cupcakes/{self.cupcake.id}"
+            resp = client.delete(url)
+
+            self.assertEqual(resp.status_code, 200)
+
+            data = resp.json.copy()
+
+            self.assertEqual(data, {
+                "deleted": self.cupcake.id
+            })
+
+            # fix this too
+            self.assertEqual(Cupcake.query.count(), 0)
+
+    def tearDOwn(self):
+        """Clean up any fouled transaction."""
+        db.session.rollback()
