@@ -134,6 +134,8 @@ class CupcakeViewsTestCase(TestCase):
                 }
             })
 
+            self.assertEqual(Cupcake.query.count(), 1)
+
     def test_delete_cupcake(self):
         """Checks if response is 200 and if there are now 0 cupcakes in the DB."""
         with app.test_client() as client:
@@ -149,7 +151,3 @@ class CupcakeViewsTestCase(TestCase):
             })
 
             self.assertEqual(Cupcake.query.count(), 0)
-
-    def tearDown(self):
-        """Clean up any fouled transaction."""
-        db.session.rollback()
