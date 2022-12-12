@@ -38,7 +38,8 @@ class Cupcake(db.Model):
     )
     image = db.Column(
         db.Text,
-        default=DEFAULT_IMAGE
+        default=DEFAULT_IMAGE,
+        nullable=False
     )
 
     def serialize(self):

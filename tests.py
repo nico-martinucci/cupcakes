@@ -124,12 +124,10 @@ class CupcakeViewsTestCase(TestCase):
 
             self.assertEqual(resp.status_code, 200)
 
-            data = resp.json.copy()
-
-            self.assertEqual(data, {
+            self.assertEqual(resp.json, {
                 "cupcake": {
-                    "flavor": "TestFlavor2",
                     "id": self.cupcake.id,
+                    "flavor": "TestFlavor2",
                     "rating": 10,
                     "size": "TestSize2",
                     "image": "http://test.com/cupcake2.jpg"

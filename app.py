@@ -22,7 +22,7 @@ db.create_all()
 # toolbar = DebugToolbarExtension(app)
 
 @app.get("/api/cupcakes")
-def show_cupcakes():
+def list_cupcakes():
     """Show all cupcakes."""
     cupcakes = Cupcake.query.all()
     serialized = [c.serialize() for c in cupcakes]
@@ -30,7 +30,7 @@ def show_cupcakes():
     return jsonify(cupcakes=serialized)
 
 @app.get("/api/cupcakes/<int:cupcake_id>")
-def show_cupcake(cupcake_id):
+def get_cupcake(cupcake_id):
     """Show a specified cupcake."""
 
     cupcake = Cupcake.query.get_or_404(cupcake_id)
@@ -39,7 +39,7 @@ def show_cupcake(cupcake_id):
     return jsonify(cupcake=serialized)
 
 @app.post("/api/cupcakes")
-def add_cupcake():
+def create_cupcake():
     """Adds a new cupcake."""
 
     flavor = request.json["flavor"]
@@ -62,10 +62,10 @@ def update_cupcake(cupcake_id):
 
     cupcake = Cupcake.query.get_or_404(cupcake_id)
 
-    cupcake.flavor = request.json["flavor"]
-    cupcake.size = request.json["size"]
-    cupcake.rating = request.json["rating"]
-    cupcake.image = request.json.get("image") or None
+    cupcake.flavor = request.json.get("flavor") or cupcake.flavor
+    cupcake.size = request.json.get("size") or cupcake.size
+    cupcake.rating = request.json.get("rating") or cupcake.rating
+    cupcake.image = request.json.get("image") or cupcake.image
 
     db.session.add(cupcake)
     db.session.commit()
@@ -78,6 +78,8 @@ def update_cupcake(cupcake_id):
 def delete_cupcake(cupcake_id):
     """Deletes a specified cupcake."""
 
+    # cupcake = Cupcake.query.get_or_404(cupcake_id)
+    # cupcake.query.delete()
     Cupcake.query.filter(Cupcake.id == cupcake_id).delete()
 
     db.session.commit()
