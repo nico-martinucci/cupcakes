@@ -50,6 +50,8 @@ class CupcakeViewsTestCase(TestCase):
         db.session.rollback()
 
     def test_list_cupcakes(self):
+        """Checks if response is 200 and if response contains all cupcakes
+        (in this case, only 1)."""
         with app.test_client() as client:
             resp = client.get("/api/cupcakes")
 
@@ -70,6 +72,7 @@ class CupcakeViewsTestCase(TestCase):
             })
 
     def test_get_cupcake(self):
+        """Checks if response is 200 and if response has CUPCAKE_DATA's data."""
         with app.test_client() as client:
             url = f"/api/cupcakes/{self.cupcake.id}"
             resp = client.get(url)
@@ -87,6 +90,8 @@ class CupcakeViewsTestCase(TestCase):
             })
 
     def test_create_cupcake(self):
+        """Checks if response is 201, if response has CUPCAKE_DATA_2's data,
+        and if there are now a total of 2 cupcakes in the DB."""
         with app.test_client() as client:
             url = "/api/cupcakes"
             resp = client.post(url, json=CUPCAKE_DATA_2)
@@ -111,14 +116,11 @@ class CupcakeViewsTestCase(TestCase):
             self.assertEqual(Cupcake.query.count(), 2)
 
     def test_update_cupcake(self):
+        """Checks if response is 200 and if the cupcake with CUPCAKE_DATA's data
+        now has CUPCAKE_DATA_2's data."""
         with app.test_client() as client:
             url = f"/api/cupcakes/{self.cupcake.id}"
-            resp = client.patch(url, json={
-                "flavor": "mango",
-                "rating": 10,
-                "size": "large",
-                "image": "https://thescranline.com/wp-content/uploads/2021/03/Mango-Meringue-Cupcakes.jpg"
-            })
+            resp = client.patch(url, json=CUPCAKE_DATA_2)
 
             self.assertEqual(resp.status_code, 200)
 
@@ -126,18 +128,16 @@ class CupcakeViewsTestCase(TestCase):
 
             self.assertEqual(data, {
                 "cupcake": {
-                    "flavor": "mango",
+                    "flavor": "TestFlavor2",
                     "id": self.cupcake.id,
                     "rating": 10,
-                    "size": "large",
-                    "image": "https://thescranline.com/wp-content/uploads/2021/03/Mango-Meringue-Cupcakes.jpg"
+                    "size": "TestSize2",
+                    "image": "http://test.com/cupcake2.jpg"
                 }
             })
 
-            # fix this
-            self.assertEqual(Cupcake.query.count(), 1)
-
     def test_delete_cupcake(self):
+        """Checks if response is 200 and if there are now 0 cupcakes in the DB."""
         with app.test_client() as client:
             url = f"/api/cupcakes/{self.cupcake.id}"
             resp = client.delete(url)
@@ -150,9 +150,8 @@ class CupcakeViewsTestCase(TestCase):
                 "deleted": self.cupcake.id
             })
 
-            # fix this too
             self.assertEqual(Cupcake.query.count(), 0)
 
-    def tearDOwn(self):
+    def tearDown(self):
         """Clean up any fouled transaction."""
         db.session.rollback()
