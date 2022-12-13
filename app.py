@@ -1,6 +1,7 @@
 """Flask app for Cupcakes"""
 
 from flask import Flask, request, redirect, render_template, jsonify
+from flask_wtf.csrf import CSRFProtect
 
 # from flask_debugtoolbar import DebugToolbarExtension
 
@@ -8,7 +9,8 @@ from models import db, connect_db, Cupcake
 from forms import AddCupcakeForm
 
 app = Flask(__name__)
-
+csrf = CSRFProtect(app)
+csrf.init_app(app)
 
 app.config['SECRET_KEY'] = "secret"
 
@@ -28,11 +30,7 @@ def show_home_page():
 
     form = AddCupcakeForm()
 
-    if form.validate_on_submit():
-        # what does this need to be, since we're using axios?
-        return
-    else:
-        return render_template("index.html", form=form)
+    return render_template("index.html", form=form)
 
 @app.get("/api/cupcakes")
 def list_cupcakes():
@@ -55,19 +53,26 @@ def get_cupcake(cupcake_id):
 def create_cupcake():
     """Adds a new cupcake; returns JSON of newly-created cupcake."""
 
-    flavor = request.json["flavor"]
-    size = request.json["size"]
-    rating = request.json["rating"]
-    image = request.json.get("image") or None
+    form = AddCupcakeForm()
 
-    new_cupcake = Cupcake(flavor=flavor, size=size, rating=rating, image=image)
+    if form.validate_on_submit():
+        flavor = request.json["flavor"]
+        size = request.json["size"]
+        rating = request.json["rating"]
+        image = request.json.get("image") or None
 
-    db.session.add(new_cupcake)
-    db.session.commit()
+        new_cupcake = Cupcake(flavor=flavor, size=size, rating=rating, image=image)
 
-    serialized = new_cupcake.serialize()
+        db.session.add(new_cupcake)
+        db.session.commit()
 
-    return (jsonify(cupcake=serialized), 201)
+        serialized = new_cupcake.serialize()
+
+        return (jsonify(cupcake=serialized), 201)
+
+    else:
+        errors = form.errors
+        return jsonify(errors=errors)
 
 @app.patch("/api/cupcakes/<int:cupcake_id>")
 def update_cupcake(cupcake_id):

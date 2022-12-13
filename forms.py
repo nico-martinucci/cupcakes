@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SelectField, BooleanField
+from wtforms import StringField, SelectField
 from wtforms.validators import InputRequired, Optional, URL
 
 class AddCupcakeForm(FlaskForm):
@@ -13,9 +13,9 @@ class AddCupcakeForm(FlaskForm):
     size = SelectField(
         "Size: ",
         choices=[
-            ('small', 'Small'), 
-            ('medium', 'Medium'), 
-            ('large', 'Large'), 
+            ('small', 'Small'),
+            ('medium', 'Medium'),
+            ('large', 'Large'),
         ],
         validators=[InputRequired()]
     )
@@ -23,16 +23,16 @@ class AddCupcakeForm(FlaskForm):
     rating = SelectField(
         "Rating: ",
         choices=[
-            ('1', '1'), 
-            ('2', '2'), 
-            ('3', '3'), 
-            ('4', '4'), 
-            ('5', '5'), 
-            ('6', '6'), 
-            ('7', '7'), 
-            ('8', '8'), 
-            ('9', '9'), 
-            ('10', '10'), 
+            ('1', '1'),
+            ('2', '2'),
+            ('3', '3'),
+            ('4', '4'),
+            ('5', '5'),
+            ('6', '6'),
+            ('7', '7'),
+            ('8', '8'),
+            ('9', '9'),
+            ('10', '10'),
         ],
         validators=[InputRequired()]
     )
